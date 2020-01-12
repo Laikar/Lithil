@@ -22,3 +22,5 @@ class Currency(command_class.Command):
         if call.args[0] == "store":
             client.bank.store_standings()
             return "storing..."
+
+    callers = ["currency"]

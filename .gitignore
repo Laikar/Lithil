@@ -209,3 +209,5 @@ dmypy.json
 
 !/config/config.yml
 !/config/config.yml
+
+config/config.yml

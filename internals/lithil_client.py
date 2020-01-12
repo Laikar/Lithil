@@ -9,14 +9,23 @@ from internals.call import Call
 
 
 class LithilClient(discord.Client):
-    def __init__(self, config:Path, *args, **kwargs):
+    def __init__(self, bot_path: Path, *args, **kwargs):
+
         super().__init__(**kwargs)
-        self.config: Config = Config(config)
-        self.command_container: CommandContainer = CommandContainer(Path("commands\\"))
-        self.command_header: str =  self.config["currency"]
-        self.bank: CurrencyManager = CurrencyManager()
+        #initialziation
+        self.bot_path = bot_path
+        self.config_path = bot_path / "config"
+        self.command_path = bot_path / "commands"
+        self.data_path = bot_path / "data"
+        self.command_container: CommandContainer = CommandContainer(self.command_path)
         self.on_message_events: List[Callable[[Message], Coroutine[Any, Any, None]]] = []
         self.on_message_events.append(self.process_message)
+
+        #Config
+        self.config: Config = Config(self.config_path)
+        self.token = self.config["token"]
+        self.bank: CurrencyManager = CurrencyManager(self.config["currency"])
+        self.command_header: str = self.config["command_header"]
 
     async def on_ready(self):
         print('Logged on as {0}!'.format(self.user))
@@ -24,7 +33,7 @@ class LithilClient(discord.Client):
     async def on_message(self, message: Message):
         if not message.author.bot:
             for on_message_event in self.on_message_events:
-                on_message_event(message)
+                await on_message_event(message)
 
             print('Message from {0.author}: {0.content}'.format(message))
 

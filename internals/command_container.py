@@ -29,7 +29,7 @@ class CommandContainer:
                         package_name = "%s.%s" % (command_path.name, folder.name)
 
                     command_module = importlib.import_module(module_name, package_name)
-                    commands_in_module = [m[0] for m in inspect.getmembers(command_module, inspect.isclass)
+                    commands_in_module = [m[1] for m in inspect.getmembers(command_module, inspect.isclass)
                                           if m[1].__module__ == command_module.__name__ and issubclass(m[1], Command)]
                     command: Command
                     for command in commands_in_module:
