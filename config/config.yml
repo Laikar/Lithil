@@ -1,8 +1,0 @@
-token:
-
-command_header: _
-
-currency:
-  name: Papaya
-  name_plural: Papayas
-  money_per_message: 2
