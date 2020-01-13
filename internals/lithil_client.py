@@ -65,6 +65,6 @@ class LithilClient(discord.Client):
                     voice_channel: VoiceChannel
                     if len(voice_channel.members) > 1:
                         for member in voice_channel.members:
-                            self.bank.add_currency(member, 25)
+                            self.bank.add_currency(member, self.bank.money_per_minute_on_voice)
             end_time = time.time()
             time.sleep(60.0-(end_time-start_time))

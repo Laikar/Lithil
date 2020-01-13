@@ -19,6 +19,7 @@ class CurrencyManager:
         self.currency_name = config_dict["name"]
         self.currency_name_plural = config_dict["name_plural"]
         self.money_per_message = config_dict["money_per_message"]
+        self.money_per_minute_on_voice = config_dict["money_per_minute_on_voice"]
         self._currency_dict: Dict[int, int] = {}
         self.data_file = self.client.data_path / (self.currency_name + ".csv")
         self._currency_dict = self.client.data_manager.read_csv_as_dict(self.data_file)

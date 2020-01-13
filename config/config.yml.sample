@@ -6,3 +6,4 @@ currency:
   name: Papaya
   name_plural: Papayas
   money_per_message: 2
+  money_per_minute_on_voice: 5
