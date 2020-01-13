@@ -1,11 +1,14 @@
 import discord
+from discord import Client
 
-import internals.command_class as command_class
-from internals.call import Call
-from internals.lithil_client import LithilClient
+from internals import Call, LithilClient, Command
 
 
-class Currency(command_class.Command):
+class Currency(Command):
+    @classmethod
+    def get_help_str(cls, call: Call, client: Client) -> str:
+        return cls.help
+
     @classmethod
     async def action(cls, call: Call, client: LithilClient):
         if call.args[0] == "list":

@@ -31,9 +31,8 @@ class CommandContainer:
                     command_module = importlib.import_module(module_name, package_name)
                     commands_in_module = [m[1] for m in inspect.getmembers(command_module, inspect.isclass)
                                           if m[1].__module__ == command_module.__name__ and issubclass(m[1], Command)]
-                    command: Command
                     for command in commands_in_module:
-                        command_name = command.__class__.__name__
+                        command_name = command.__name__
                         self.command_dictionary[command_name] = command
                         for caller in command.callers:
                             self.caller_dictionary[caller] = command_name

@@ -16,5 +16,6 @@ class Call:
         self.targets: List[Member] = message.mentions
         self.channel: TextChannel = message.channel
         self.raw_content: AnyStr = message.content
+        self.beheaded_content = beheaded.replace(self.command, "", 1)
         self.message: Message = message
         self.server: Guild = message.guild
