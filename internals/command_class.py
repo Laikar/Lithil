@@ -42,4 +42,4 @@ class Command(ABC):
 
     @classmethod
     def log(cls, call: Call, client: Client):
-        print("Call for command %s made by %s" % (call.command, call.caller))
+        print("Call for command %s made by %s" % (call.command, call.author))

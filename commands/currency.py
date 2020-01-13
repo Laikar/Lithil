@@ -21,7 +21,7 @@ class Currency(Command):
 
             return out
         if call.args[0] == "me":
-            return client.bank.get_currency(call.caller)
+            return "{} Tienes {} {}".format(call.author.mention, client.bank.get_currency(call.author), client.bank.currency_name)
         if call.args[0] == "store":
             client.bank.store_standings()
             return "storing..."

@@ -12,7 +12,7 @@ class Call:
         split = beheaded.split(" ")
         self.command: AnyStr = split[0]
         self.args: List[AnyStr] = split[1:]
-        self.caller: Member = message.author
+        self.author: Member = message.author
         self.targets: List[Member] = message.mentions
         self.channel: TextChannel = message.channel
         self.raw_content: AnyStr = message.content

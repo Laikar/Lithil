@@ -1,7 +1,9 @@
+import time
+from concurrent.futures import ThreadPoolExecutor
 from typing import List, Callable, AnyStr, Coroutine, Any, TYPE_CHECKING
 
 from internals import CurrencyManager, CommandContainer, Config, DataIO
-from discord import Message
+from discord import Message, Guild, VoiceChannel
 
 from pathlib import Path
 import discord
@@ -21,6 +23,8 @@ class LithilClient(discord.Client):
         self.command_container: CommandContainer = CommandContainer(self.command_path)
         self.on_message_events: List[Callable[[Message], Coroutine[Any, Any, None]]] = []
         self.on_message_events.append(self.process_message)
+        self.watching_voice_channels = False
+        self.process_pool = ThreadPoolExecutor(5)
 
         #Config
         self.config: Config = Config(self.config_path)
@@ -30,6 +34,8 @@ class LithilClient(discord.Client):
 
     async def on_ready(self):
         print('Logged on as {0}!'.format(self.user))
+        self.watching_voice_channels = True
+        await self.loop.run_in_executor(self.process_pool, self.voice_channel_watcher)
 
     async def on_message(self, message: Message):
         if not message.author.bot:
@@ -49,3 +55,16 @@ class LithilClient(discord.Client):
             call = Call(message)
             if call.command in self.command_container.caller_dictionary.keys():
                 await self.command_container.call_command(call, self)
+
+    def voice_channel_watcher(self):
+        while self.watching_voice_channels:
+            start_time = time.time()
+            for server in self.guilds:
+                server: Guild
+                for voice_channel in server.voice_channels:
+                    voice_channel: VoiceChannel
+                    if len(voice_channel.members) > 1:
+                        for member in voice_channel.members:
+                            self.bank.add_currency(member, 25)
+            end_time = time.time()
+            time.sleep(60.0-(end_time-start_time))

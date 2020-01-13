@@ -5,14 +5,12 @@ from typing import Dict, Any, AnyStr
 
 class DataIO:
     def __init__(self, data_path: Path):
-        print(data_path.absolute())
         if not data_path.exists():
             data_path.mkdir()
 
     @classmethod
     def store_dict_as_csv(cls, file: Path, data: Dict[AnyStr, Any]):
         if not file.exists():
-            print(file.absolute())
             file.touch()
         with file.open("w+") as file_io:
             fieldnames = ['key', 'value']
