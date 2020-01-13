@@ -1,6 +1,6 @@
 from typing import List, Callable, AnyStr, Coroutine, Any, TYPE_CHECKING
 
-from internals import CurrencyManager, CommandContainer, Config
+from internals import CurrencyManager, CommandContainer, Config, DataIO
 from discord import Message
 
 from pathlib import Path
@@ -17,6 +17,7 @@ class LithilClient(discord.Client):
         self.config_path = bot_path / "config"
         self.command_path = bot_path / "commands"
         self.data_path = bot_path / "data"
+        self.data_manager = DataIO(self.data_path)
         self.command_container: CommandContainer = CommandContainer(self.command_path)
         self.on_message_events: List[Callable[[Message], Coroutine[Any, Any, None]]] = []
         self.on_message_events.append(self.process_message)
@@ -24,7 +25,7 @@ class LithilClient(discord.Client):
         #Config
         self.config: Config = Config(self.config_path)
         self.token = self.config["token"]
-        self.bank: CurrencyManager = CurrencyManager(self.config["currency"])
+        self.bank: CurrencyManager = CurrencyManager(self, self.config["currency"])
         self.command_header: str = self.config["command_header"]
 
     async def on_ready(self):
@@ -46,4 +47,5 @@ class LithilClient(discord.Client):
     async def process_message(self, message: Message) -> None:
         if self.should_process(message):
             call = Call(message)
-            await self.command_container.call_command(call, self)
+            if call.command in self.command_container.caller_dictionary.keys():
+                await self.command_container.call_command(call, self)

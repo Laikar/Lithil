@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from typing import Dict
+from typing import Dict, TYPE_CHECKING
 from discord import User, Message, Guild, Member
-from internals import LithilClient
+if TYPE_CHECKING:
+    from internals import LithilClient
 
 import csv
 
@@ -20,6 +21,8 @@ class CurrencyManager:
         self.money_per_message = config_dict["money_per_message"]
         self._currency_dict: Dict[int, int] = {}
         self.data_file = self.client.data_path / (self.currency_name + ".csv")
+        self._currency_dict = self.client.data_manager.read_csv_as_dict(self.data_file)
+        self.client.on_message_events.append(self.on_message)
 
     def get_currency(self, user: User) -> int:
         try:
@@ -42,17 +45,13 @@ class CurrencyManager:
             self.set_currency(user, self.get_currency(user) - value)
 
     def register_user(self, user: User):
-        self._currency_dict[user.id] = 0
+        self.set_currency(user, 0)
 
-    def status_report(self):
+    def get_currency_as_dict(self):
         return self._currency_dict
 
     def store_standings(self) -> None:
-        with open(str(self.data_file), "w+") as file:
-            fieldnames = ['user_id', 'amount']
-            w = csv.DictWriter(file, fieldnames=fieldnames)
-            w.writeheader()
-            w.writerows(self._currency_dict)
+        self.client.data_manager.store_dict_as_csv(self.data_file, self._currency_dict)
 
     async def on_message(self, message: Message) -> None:
         self.add_currency(message.author, self.money_per_message)
