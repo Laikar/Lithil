@@ -34,9 +34,9 @@ class LithilClient(discord.Client):
 
         self.watching_voice_channels = False
         self.process_pool = ThreadPoolExecutor(5)
+        print(os.name)
         if not os.name == 'nt':
             print("Registering signals")
-            self.loop.add_signal_handler(signal.SIGTERM, functools.partial(asyncio.ensure_future, self.stop_bot))
 
         # Config
         self.config: Config = Config(self.config_path)
@@ -95,12 +95,3 @@ class LithilClient(discord.Client):
             while self.watching_voice_channels and i != 0:
                 time.sleep(1)
                 i -= 1
-
-    async def stop_bot(self):
-        print("Apagando")
-        await self.log_channel.send("Apagando...")
-        for event in self.on_close_events:
-            event()
-        self.watching_voice_channels = False
-        self.loop.run_until_complete(self.logout())
-        self.loop.stop()
