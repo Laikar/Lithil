@@ -22,9 +22,14 @@ class DataIO:
     @classmethod
     def read_csv_as_dict(cls, file : Path):
         out = {}
-        with file.open("r+") as openfile:
-            csv_reader = csv.DictReader(openfile)
-            for row in csv_reader:
-                out[int(row["key"])] = int(row["value"])
-        return out
+        try:
+            with file.open("r+") as openfile:
+                csv_reader = csv.DictReader(openfile)
+                for row in csv_reader:
+                    out[int(row["key"])] = int(row["value"])
+            return out
+        except FileNotFoundError:
+            print("Tried to read from file {} but it does not exist".format(file))
+            return out
+
 
