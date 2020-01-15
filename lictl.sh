@@ -34,6 +34,7 @@ start_bot(){
 stop_bot(){
     PID=$(cat ${PID_FILE})
     kill "-15" ${PID}
+    kill ${PID}
     rm ${PID_FILE}
 }
 restart_bot(){
