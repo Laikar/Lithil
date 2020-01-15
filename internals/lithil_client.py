@@ -1,3 +1,4 @@
+import asyncio
 import os
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -33,7 +34,7 @@ class LithilClient(discord.Client):
         self.watching_voice_channels = False
         self.process_pool = ThreadPoolExecutor(5)
         if not os.name == 'nt':
-            self.loop.add_signal_handler(signal.SIGTERM, self.stop_bot)
+            self.loop.add_signal_handler(signal.SIGTERM, lambda: asyncio.ensure_future(self.stop_bot()))
 
         # Config
         self.config: Config = Config(self.config_path)
