@@ -46,6 +46,10 @@ update_bot(){
 
 }
 
+show_logs(){
+    cat "$PROGRAM_PATH/nohup.out"
+}
+
 if [ ! -e "$PYTHON" ]; then
   echo "ERROR: Python not found!"
   echo "Try installing this with:"
@@ -75,6 +79,9 @@ case "$COMMAND" in
         echo "Updating..."
         update_bot
         echo "Updated, you should run sudo make update on $PROGRAM_PATH"
+        ;;
+    logs)
+        show_logs
         ;;
 esac
 exit 0
