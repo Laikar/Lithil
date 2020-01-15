@@ -20,7 +20,7 @@ class DataIO:
                 w.writerow({'key': key, 'value': value})
 
     @classmethod
-    def read_csv_as_dict(cls, file : Path):
+    def read_csv_as_dict(cls, file: Path):
         out = {}
         try:
             with file.open("r+") as openfile:
