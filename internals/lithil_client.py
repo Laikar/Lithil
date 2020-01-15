@@ -4,7 +4,7 @@ from concurrent.futures import ThreadPoolExecutor
 from typing import List, Callable, AnyStr, Coroutine, Any, TYPE_CHECKING
 
 from internals import CurrencyManager, CommandContainer, Config, DataIO
-from discord import Message, Guild, VoiceChannel
+from discord import Message, Guild, VoiceChannel, TextChannel
 
 from pathlib import Path
 import discord
@@ -41,6 +41,7 @@ class LithilClient(discord.Client):
         self.token = self.config["token"]
         self.bank: CurrencyManager = CurrencyManager(self, self.config["currency"])
         self.command_header: str = self.config["command_header"]
+        self.log_channel: TextChannel = self.get_channel(self.config["log_channel"])
 
         # Event lists
         self.on_message_events.append(self.process_message)
@@ -87,7 +88,7 @@ class LithilClient(discord.Client):
             time.sleep(60.0 - (end_time - start_time))
 
     def stop_bot(self):
-        print("Stopping")
+        self.log_channel.send("Apagando...")
         for event in self.on_close_events:
             event()
         self.process_pool.shutdown()
