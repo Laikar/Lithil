@@ -87,11 +87,11 @@ class LithilClient(discord.Client):
                     if len(voice_channel.members) > 1:
                         for member in voice_channel.members:
                             self.bank.add_currency(member, self.bank.money_per_minute_on_voice)
-            print("Voice channel watcher watched")
             end_time = time.time()
             time.sleep(60.0 - (end_time - start_time))
 
     async def stop_bot(self):
+        print("Apagando")
         await self.log_channel.send("Apagando...")
         for event in self.on_close_events:
             event()
