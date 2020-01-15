@@ -97,7 +97,7 @@ class LithilClient(discord.Client):
                 time.sleep(1)
                 i -= 1
 
-    def stop_bot(self):
+    async def stop_bot(self):
         print("Apagando")
         await self.log_channel.send("Apagando...")
         for event in self.on_close_events:
