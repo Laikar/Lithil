@@ -34,6 +34,7 @@ class LithilClient(discord.Client):
         self.watching_voice_channels = False
         self.process_pool = ThreadPoolExecutor(5)
         if not os.name == 'nt':
+            print("Registering signals")
             self.loop.add_signal_handler(signal.SIGTERM, lambda: asyncio.ensure_future(self.stop_bot()))
 
         # Config
