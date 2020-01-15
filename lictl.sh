@@ -25,8 +25,10 @@ EOF
 }
 
 start(){
+
     ${PYTHON} ${PROGRAM_PATH}/Main.py &
     echo $! > ${DATA_PATH}/bot.pid
+
 }
 stop(){
     PID=$(cat ${PID_FILE})
@@ -56,7 +58,9 @@ COMMAND=$1
 
 case "$COMMAND" in
     "start")
+        echo "Starting..."
         start
+        echo "Started"
         ;;
     "stop")
         stop
@@ -65,7 +69,9 @@ case "$COMMAND" in
         restart
         ;;
     "update")
+        echo "Updating..."
         update
+        echo "Updated"
         ;;
 esac
 exit 0

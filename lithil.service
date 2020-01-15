@@ -1,12 +1,15 @@
 [Unit]
-Description=My Bot Name
+Description=Lithil
 After=network-online.target
 
 [Service]
 Type=simple
-WorkingDirectory=/your/bots/directory
-ExecStart=/usr/bin/python3 /your/bots/directory/file.py
-User=username
+WorkingDirectory=/yopt/lithil
+ExecStart=/usr/local/bin/lithil start
+ExecStop=/usr/local/bin/lithil stop
+ExecReload=/usr/local/bin/lithil restart
+Environment="PATH=/usr/local/bin:/usr/bin:/bin"
+User=lithil
 Restart=on-failure
 
 [Install]
