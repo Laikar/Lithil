@@ -54,7 +54,7 @@ show_logs(){
     cat ${LOG_FILE}
 }
 clear_logs(){
-    rm ${NOHUP_LOGS}
+    rm ${LOG_FILE}
 }
 
 if [ ! -e "$PYTHON" ]; then
