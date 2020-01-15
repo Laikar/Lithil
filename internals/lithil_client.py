@@ -35,7 +35,7 @@ class LithilClient(discord.Client):
         self.watching_voice_channels = False
         self.process_pool = ThreadPoolExecutor(5)
         try:
-            self.loop.add_signal_handler(signal.SIGTERM, lambda: self.stop_bot())
+            self.loop.add_signal_handler(signal.SIGTERM, lambda: asyncio.ensure_future(self.stop_bot()))
         except NotImplementedError:
             pass
 
