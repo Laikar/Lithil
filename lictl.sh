@@ -57,18 +57,18 @@ fi
 COMMAND=$1
 
 case "$COMMAND" in
-    "start")
+    start)
         echo "Starting..."
         start
         echo "Started"
         ;;
-    "stop")
+    stop)
         stop
         ;;
-    "restart")
+    restart)
         restart
         ;;
-    "update")
+    update)
         echo "Updating..."
         update
         echo "Updated"
