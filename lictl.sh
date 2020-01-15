@@ -6,7 +6,7 @@ PROGRAM_PATH="/opt/lithil"
 DATA_PATH="$PROGRAM_PATH/data"
 PID_FILE="$DATA_PATH/bot.pid"
 
-PYTHON=$(which python3.8)
+PYTHON=$(which ${PROGRAM_PATH}/venv/bin/python)
 
 help_message(){
     cat <<EOF
