@@ -26,7 +26,6 @@ class LithilClient(discord.Client):
         self.on_message_events: List[Callable[[Message], Coroutine[Any, Any, None]]] = []
         self.on_close_events: List[Callable[[], None]] = []
 
-
         # Class Initialization
         self.data_manager = DataIO(self.data_path)
         self.command_container: CommandContainer = CommandContainer(self.command_path)
@@ -41,7 +40,8 @@ class LithilClient(discord.Client):
         self.token = self.config["token"]
         self.bank: CurrencyManager = CurrencyManager(self, self.config["currency"])
         self.command_header: str = self.config["command_header"]
-        self.log_channel: TextChannel = self.get_channel(self.config["log_channel"])
+        print(self.config["log_channel"])
+        self.log_channel: TextChannel = None
 
         # Event lists
         self.on_message_events.append(self.process_message)
@@ -49,6 +49,9 @@ class LithilClient(discord.Client):
 
     async def on_ready(self):
         print('Logged on as {0}!'.format(self.user))
+        self.log_channel = self.get_channel(self.config["log_channel"])
+
+        await self.log_channel.send("Lithil On")
 
         self.loop.run_in_executor(self.process_pool, self.voice_channel_watcher)
         print("Watchers ready")
@@ -87,8 +90,8 @@ class LithilClient(discord.Client):
             end_time = time.time()
             time.sleep(60.0 - (end_time - start_time))
 
-    def stop_bot(self):
-        self.log_channel.send("Apagando...")
+    async def stop_bot(self):
+        await self.log_channel.send("Apagando...")
         for event in self.on_close_events:
             event()
         self.process_pool.shutdown()
