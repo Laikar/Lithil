@@ -25,8 +25,7 @@ EOF
 }
 
 start_bot(){
-
-    ${PYTHON} ${PROGRAM_PATH}/Main.py &
+    nohup ${PYTHON} ${PROGRAM_PATH}/Main.py &
     echo $! > ${DATA_PATH}/bot.pid
 
 }
