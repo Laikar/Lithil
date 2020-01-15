@@ -86,7 +86,7 @@ class LithilClient(discord.Client):
             end_time = time.time()
             time.sleep(60.0 - (end_time - start_time))
 
-    async def stop_bot(self):
+    def stop_bot(self):
         print("Stopping")
         for event in self.on_close_events:
             event()

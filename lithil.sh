@@ -18,7 +18,10 @@ LITHIL_ARGS="-p $PROG -l $LOCATION -c $MSCS_DEFAULTS $@"
 
 # Run the lictl script.
 if [ "$USER_NAME" = "$(whoami)" ]; then
+    echo A
   lictl "$LITHIL_ARGS"
 else
+    echo B
   sudo "PATH=$PATH" -u $USER_NAME -H lictl "$LITHIL_ARGS"
 fi
+echo C
