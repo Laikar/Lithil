@@ -17,7 +17,7 @@ LOCATION="/opt/lithil"
 LITHIL_ARGS="-p $PROG -l $LOCATION -c $MSCS_DEFAULTS $@"
 
 # Run the lictl script.
-if [[ "$USER_NAME" = "$(whoami)" ]]; then
+if [ "$USER_NAME" = "$(whoami)" ]; then
   lictl "$LITHIL_ARGS"
 else
   sudo "PATH=$PATH" -u $USER_NAME -H lictl "$LITHIL_ARGS"
