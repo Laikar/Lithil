@@ -24,24 +24,24 @@ Actions:
 EOF
 }
 
-start(){
+start_bot(){
 
     ${PYTHON} ${PROGRAM_PATH}/Main.py &
     echo $! > ${DATA_PATH}/bot.pid
 
 }
-stop(){
+stop_bot(){
     PID=$(cat ${PID_FILE})
     kill -SIGTERM -${PID}
     rm ${PID_FILE}
 }
-restart(){
-    stop
-    start
+restart_bot(){
+    stop_bot
+    start_bot
 }
-update(){
+update_bot(){
     if test -f "$PID_FILE"; then
-        stop
+        stop_bot
     fi
     git -C "$PROGRAM_PATH" pull
 
@@ -59,18 +59,18 @@ COMMAND=$1
 case "$COMMAND" in
     start)
         echo "Starting..."
-        start
+        start_bot
         echo "Started"
         ;;
     stop)
-        stop
+        stop_bot
         ;;
     restart)
-        restart
+        restart_bot
         ;;
     update)
         echo "Updating..."
-        update
+        update_bot
         echo "Updated"
         ;;
 esac
