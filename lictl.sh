@@ -5,6 +5,7 @@ PROG=$(basename $0)
 PROGRAM_PATH="/opt/lithil"
 DATA_PATH="$PROGRAM_PATH/data"
 PID_FILE="$DATA_PATH/bot.pid"
+LOGS_FILE="$PROGRAM_PATH/nohup.out"
 
 PYTHON=$(which ${PROGRAM_PATH}/venv/bin/python)
 
@@ -25,13 +26,14 @@ EOF
 }
 
 start_bot(){
+    clear_logs
     nohup ${PYTHON} ${PROGRAM_PATH}/Main.py &
     echo $! > ${DATA_PATH}/bot.pid
 
 }
 stop_bot(){
     PID=$(cat ${PID_FILE})
-    kill -SIGTERM ${PID}
+    kill "-15" ${PID}
     rm ${PID_FILE}
 }
 restart_bot(){
@@ -47,7 +49,10 @@ update_bot(){
 }
 
 show_logs(){
-    cat "$PROGRAM_PATH/nohup.out"
+    cat ${LOGS_FILE}
+}
+clear_logs(){
+    rm ${LOGS_FILE}
 }
 
 if [ ! -e "$PYTHON" ]; then
