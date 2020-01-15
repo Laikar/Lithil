@@ -63,15 +63,19 @@ case "$COMMAND" in
         echo "Started"
         ;;
     stop)
+        echo "Stopping..."
         stop_bot
+        echo "Stopped"
         ;;
     restart)
+        echo "Restarting..."
         restart_bot
+        echo "Restarted"
         ;;
     update)
         echo "Updating..."
         update_bot
-        echo "Updated"
+        echo "Updated, you should run sudo make update on $PROGRAM_PATH"
         ;;
 esac
 exit 0

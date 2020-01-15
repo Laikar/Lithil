@@ -14,8 +14,7 @@ LOCATION="/opt/lithil"
 
 # Run the lictl script.
 if [ "$USER_NAME" = "$(whoami)" ]; then
-  lictl "$LITHIL_ARGS"
+  lictl "$@"
 else
-  echo "sudo -u ${USER_NAME} -H lictl $@"
   sudo -u ${USER_NAME} -H lictl "$@"
 fi
