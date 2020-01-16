@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 PROG=$(basename $0)
 
