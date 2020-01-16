@@ -1,6 +1,6 @@
 from typing import List, TYPE_CHECKING
 from enum import Enum
-from . import Call, LithilClient
+from internals import Call
 from discord import Client, TextChannel, Member, Role
 
 from abc import ABC, abstractmethod
@@ -57,7 +57,8 @@ class Command(ABC):
         return call.channel
 
     @classmethod
-    def log(cls, call: Call, client: LithilClient):
+    def log(cls, call: Call, client: Client):
+        # TODO Mirar porque aqui si intento importar el Lithil Client en vez del client normal todo explota
         client.logger.info("Call for command {0} made by {1}".format(call.command, call.author))
 
     @classmethod
