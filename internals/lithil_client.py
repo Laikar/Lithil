@@ -69,10 +69,9 @@ class LithilClient(discord.Client):
 
     async def on_message(self, message: Message):
         if not message.author.bot:
+            self.logger.info('Message from {0.author}: {0.content}'.format(message))
             for on_message_event in self.on_message_events:
                 await on_message_event(message)
-
-            self.logger.info('Message from {0.author}: {0.content}'.format(message))
 
     async def on_disconnect(self):
         self.bank.store_standings()
@@ -128,4 +127,5 @@ class LithilClient(discord.Client):
         for event in self.on_close_events:
             event()
         self.watching_voice_channels = False
+        await self.logout()
         self.loop.stop()
