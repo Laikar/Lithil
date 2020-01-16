@@ -102,6 +102,4 @@ class LithilClient(discord.Client):
         for event in self.on_close_events:
             event()
         self.watching_voice_channels = False
-        self.loop.stop()
-        self.loop.run_until_complete(self.logout())
-        self.loop.close()
+        await self.close()
