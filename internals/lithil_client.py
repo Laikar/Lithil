@@ -97,7 +97,23 @@ class LithilClient(discord.Client):
                 time.sleep(1)
                 i -= 1
 
-    def stop_bot(self):
+    def run_bot(self):
+        async def runner():
+            try:
+                await self.start(self.token)
+            finally:
+                await self.stop_bot()
+
+        future = asyncio.ensure_future(runner(), loop=self.loop)
+        future.add_done_callback(self.loop.stop)
+        try:
+            self.loop.run_forever()
+        except KeyboardInterrupt:
+            print('Received signal to terminate bot and event loop.')
+        finally:
+            future.remove_done_callback(self.loop.stop)
+
+    async def stop_bot(self):
         print("Apagando")
         for event in self.on_close_events:
             event()
