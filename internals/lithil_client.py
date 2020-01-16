@@ -1,5 +1,6 @@
 import asyncio
 import functools
+import logging
 import os
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -23,7 +24,15 @@ class LithilClient(discord.Client):
         self.config_path = bot_path / "config"
         self.command_path = bot_path / "commands"
         self.data_path = bot_path / "data"
+        self.log_file = bot_path / "lithil.log"
 
+        # Logging
+
+        self.logger = logging.getLogger('discord')
+        self.logger.setLevel(logging.DEBUG)
+        self.logging_handler = logging.FileHandler(filename=str(self.log_file.absolute()), encoding='utf-8', mode='w')
+        self.logging_handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+        self.logger.addHandler(self.logging_handler)
         # EventLists
         self.on_message_events: List[Callable[[Message], Coroutine[Any, Any, None]]] = []
         self.on_close_events: List[Callable[[], None]] = []
@@ -35,7 +44,7 @@ class LithilClient(discord.Client):
         self.watching_voice_channels = False
         self.process_pool = ThreadPoolExecutor(5)
         try:
-            self.loop.add_signal_handler(signal.SIGTERM, lambda: self.loop.stop())
+            self.loop.add_signal_handler(signal.SIGTERM, lambda: asyncio.ensure_future(self.stop_bot()))
         except NotImplementedError:
             pass
 
@@ -44,7 +53,6 @@ class LithilClient(discord.Client):
         self.token = self.config["token"]
         self.bank: CurrencyManager = CurrencyManager(self, self.config["currency"])
         self.command_header: str = self.config["command_header"]
-        print(self.config["log_channel"])
         self.log_channel: TextChannel = None
 
         # Event lists adding
@@ -52,20 +60,19 @@ class LithilClient(discord.Client):
         self.on_close_events.append(self.bank.store_standings)
 
     async def on_ready(self):
-        print('Logged on as {0}!'.format(self.user))
+        self.logger.info("Logged on as {0}".format(self.user))
         self.log_channel = self.get_channel(self.config["log_channel"])
-
+        self.logger.info("Log channel is {0} with ID {1}".format(self.log_channel.name, self.log_channel.id))
         await self.log_channel.send("Lithil On")
-
+        # watchers
         self.loop.run_in_executor(self.process_pool, self.voice_channel_watcher)
-        print("Watchers ready")
 
     async def on_message(self, message: Message):
         if not message.author.bot:
             for on_message_event in self.on_message_events:
                 await on_message_event(message)
 
-            print('Message from {0.author}: {0.content}'.format(message))
+            self.logger.info('Message from {0.author}: {0.content}'.format(message))
 
     async def on_disconnect(self):
         self.bank.store_standings()
@@ -81,6 +88,7 @@ class LithilClient(discord.Client):
 
     def voice_channel_watcher(self):
         self.watching_voice_channels = True
+        self.logger.info("Voice Channel Watcher Started")
         while self.watching_voice_channels:
             start_time = time.time()
             for server in self.guilds:
@@ -96,6 +104,7 @@ class LithilClient(discord.Client):
             while self.watching_voice_channels and i != 0:
                 time.sleep(1)
                 i -= 1
+        self.logger.info("Voice Channel Watcher Stopped")
 
     def run_bot(self):
         async def runner():
@@ -109,13 +118,14 @@ class LithilClient(discord.Client):
         try:
             self.loop.run_forever()
         except KeyboardInterrupt:
-            print('Received signal to terminate bot and event loop.')
+            self.logger.info('Received signal to terminate bot and event loop.')
         finally:
             future.remove_done_callback(self.loop.stop)
 
     async def stop_bot(self):
-        print("Apagando")
+        self.logger.info(msg="Apagando")
+        await self.log_channel.send("Lithil Off")
         for event in self.on_close_events:
             event()
         self.watching_voice_channels = False
-        await self.close()
+        self.loop.stop()

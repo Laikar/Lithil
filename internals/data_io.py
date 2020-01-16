@@ -1,7 +1,7 @@
 import csv
 from pathlib import Path
 from typing import Dict, Any, AnyStr
-
+import logging
 
 class DataIO:
     def __init__(self, data_path: Path):
@@ -29,7 +29,7 @@ class DataIO:
                     out[int(row["key"])] = int(row["value"])
             return out
         except FileNotFoundError:
-            print("Tried to read from file {} but it does not exist".format(file))
+            logging.getLogger('discord').info("Tried to read from file {} but it does not exist".format(file))
             return out
 
 

@@ -1,7 +1,6 @@
-from typing import List
-
+from typing import List, TYPE_CHECKING
 from enum import Enum
-from internals import Call
+from . import Call, LithilClient
 from discord import Client, TextChannel, Member, Role
 
 from abc import ABC, abstractmethod
@@ -58,8 +57,8 @@ class Command(ABC):
         return call.channel
 
     @classmethod
-    def log(cls, call: Call, client: Client):
-        print("Call for command %s made by %s" % (call.command, call.author))
+    def log(cls, call: Call, client: LithilClient):
+        client.logger.info("Call for command {0} made by {1}".format(call.command, call.author))
 
     @classmethod
     def caller_can_execute(cls, call: Call, client: Client):

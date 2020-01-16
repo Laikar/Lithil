@@ -2,11 +2,10 @@
 
 PROG=$(basename $0)
 
+USER="lithil"
 PROGRAM_PATH="/opt/lithil"
 DATA_PATH="$PROGRAM_PATH/data"
-PID_FILE="$DATA_PATH/bot.pid"
-NOHUP_LOGS="$PROGRAM_PATH/nohup.out"
-LOG_FILE="$PROGRAM_PATH/logs.txt"
+LOG_FILE="$PROGRAM_PATH/lithil.log"
 
 PYTHON=$(which ${PROGRAM_PATH}/venv/bin/python)
 
@@ -27,15 +26,19 @@ EOF
 }
 
 start_bot(){
+    echo "Starting..."
     clear_logs
-    nohup ${PYTHON} -u ${PROGRAM_PATH}/Main.py > ${LOG_FILE} &
-    echo $! > ${DATA_PATH}/bot.pid
+    nohup ${PYTHON} ${PROGRAM_PATH}/Main.py &
+    echo "Started"
 
 }
 stop_bot(){
-    PID=$(cat ${PID_FILE})
+    echo "Stopping..."
+    PID=$(pgrep -u ${USER} python)
     kill -s 15 ${PID}
-    rm ${PID_FILE}
+    sleep 2
+    echo "Stopped"
+
 }
 
 restart_bot(){
@@ -43,7 +46,7 @@ restart_bot(){
     start_bot
 }
 update_bot(){
-    if test -f "$PID_FILE"; then
+    if [[ pgrep -u ${USER} python ]]; then
         stop_bot
     fi
     git -C "$PROGRAM_PATH" pull
@@ -51,13 +54,13 @@ update_bot(){
 }
 
 show_logs(){
-    cat ${LOG_FILE}
+    less +F ${LOG_FILE}
 }
 clear_logs(){
     rm ${LOG_FILE}
 }
 
-if [ ! -e "$PYTHON" ]; then
+if [[ ! -e "$PYTHON" ]]; then
   echo "ERROR: Python not found!"
   echo "Try installing this with:"
   echo "sudo apt-get install python"
@@ -68,14 +71,13 @@ COMMAND=$1
 
 case "$COMMAND" in
     start)
-        echo "Starting..."
+
         start_bot
-        echo "Started"
+
         ;;
     stop)
-        echo "Stopping..."
+
         stop_bot
-        echo "Stopped"
         ;;
     restart)
         echo "Restarting..."
