@@ -46,7 +46,7 @@ restart_bot(){
     start_bot
 }
 update_bot(){
-    if [[ pgrep -u ${USER} python ]]; then
+    if [ pgrep -u ${USER} python ]; then
         stop_bot
     fi
     git -C "$PROGRAM_PATH" pull
@@ -60,7 +60,7 @@ clear_logs(){
     rm ${LOG_FILE}
 }
 
-if [[ ! -e "$PYTHON" ]]; then
+if [ ! -e "$PYTHON" ]; then
   echo "ERROR: Python not found!"
   echo "Try installing this with:"
   echo "sudo apt-get install python"
