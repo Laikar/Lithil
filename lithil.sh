@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # This is a wrapper to lictl
 # Source: https://github.com/MinecraftServerControl/mscs

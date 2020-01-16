@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 PROG=$(basename $0)
 
@@ -46,7 +46,7 @@ restart_bot(){
     start_bot
 }
 update_bot(){
-    if [ pgrep -u ${USER} python ]; then
+    if [ "pgrep -u ${USER} python" ]; then
         stop_bot
     fi
     git -C "$PROGRAM_PATH" pull
