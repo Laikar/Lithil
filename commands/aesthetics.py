@@ -8,11 +8,12 @@ class Aesthetics(Command):
     def get_help_str(cls, call: Call, client: Client) -> str:
         return cls.help
 
-    help = """Este comando convierte un texto en algo 
-       :regional_indicator_e: :regional_indicator_s: :regional_indicator_t: :regional_indicator_e: :regional_indicator_t: :regional_indicator_i: :regional_indicator_c: :regional_indicator_o:
-       lo uso principalmente para probar que los bots funcionan
-       uso: _aesthetic [texto]"""
-    callers = ["aesthetic", "asd"]
+    help =\
+"""Este comando convierte un texto en algo 
+:regional_indicator_e: :regional_indicator_s: :regional_indicator_t: :regional_indicator_e: :regional_indicator_t: :regional_indicator_i: :regional_indicator_c: :regional_indicator_o:
+lo uso principalmente para probar que los bots funcionan
+uso: _aesthetic [texto]"""
+    callers = ["aesthetics", "asd"]
     should_delete_caller = True
 
     @classmethod

@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from typing import Dict, TYPE_CHECKING
-from discord import User, Message, Guild, Member
+from discord import User, Message, Guild, Member, Emoji
+
 if TYPE_CHECKING:
     from internals import LithilClient
 
@@ -14,7 +15,7 @@ class NotEnoughCurrencyException(Exception):
 
 class CurrencyManager:
 
-    def __init__(self, client: LithilClient, config_dict: Dict):
+    def __init__(self, client: 'LithilClient', config_dict: Dict):
         self.client = client
         self.currency_name = config_dict["name"]
         self.currency_name_plural = config_dict["name_plural"]
@@ -24,6 +25,7 @@ class CurrencyManager:
         self.data_file = self.client.data_path / (self.currency_name + ".csv")
         self._currency_dict = self.client.data_manager.read_csv_as_dict(self.data_file)
         self.client.on_message_events.append(self.on_message)
+        self.client.on_close_events.append(self.store_standings)
 
     def get_currency(self, user: User) -> int:
         try:
@@ -56,3 +58,16 @@ class CurrencyManager:
 
     async def on_message(self, message: Message) -> None:
         self.add_currency(message.author, self.money_per_message)
+
+    def get_top_standings_message(self) -> str:
+        out: str = "__**Ranking de gente con mas papayas:**__\n"
+        currency_dict = self.get_currency_as_dict()
+        ordered_users = list(currency_dict.keys())
+        ordered_users.sort(reverse=True)
+        for i in range(len(ordered_users)):
+            out += "{0} - {1} {2} :{3}:" \
+                .format(i + 1,
+                        self.client.get_user(ordered_users[i]),
+                        self.get_currency(ordered_users[i]),
+                        self.currency_name)
+        return out

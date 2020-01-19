@@ -1,18 +1,15 @@
+from __future__ import annotations
 import asyncio
-import functools
 import logging
-import os
-import time
-from concurrent.futures import ThreadPoolExecutor
-from typing import List, Callable, AnyStr, Coroutine, Any, TYPE_CHECKING
-
-from internals import CurrencyManager, CommandContainer, Config, DataIO
-from discord import Message, Guild, VoiceChannel, TextChannel
-
-from pathlib import Path
-import discord
-from internals.call import Call
 import signal
+from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
+from typing import List, Callable, Coroutine, Any
+
+import discord
+from discord import Message, TextChannel
+
+from internals import CurrencyManager, CommandContainer, Config, DataIO, Call, Watcher
 
 
 class LithilClient(discord.Client):
@@ -26,20 +23,27 @@ class LithilClient(discord.Client):
         self.data_path = bot_path / "data"
         self.log_file = bot_path / "lithil.log"
 
+        # EventLists
+        self.on_message_events: List[Callable[[Message], Coroutine[Any, Any, None]]] = []
+        self.on_ready_events: List[Callable[[], None]] = []
+        self.on_close_events: List[Callable[[], None]] = []
+        self.watchers: List[Watcher] = []
+
         # Logging
 
         self.logger = logging.getLogger('discord')
-        self.logger.setLevel(logging.DEBUG)
-        self.logging_handler = logging.FileHandler(filename=str(self.log_file.absolute()), encoding='utf-8', mode='w')
-        self.logging_handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
-        self.logger.addHandler(self.logging_handler)
-        # EventLists
-        self.on_message_events: List[Callable[[Message], Coroutine[Any, Any, None]]] = []
-        self.on_close_events: List[Callable[[], None]] = []
+        self.logger.setLevel(logging.INFO)
+        self.logging_file_handler = logging.FileHandler(filename=str(self.log_file.absolute()), encoding='utf-8', mode='w')
+        self.logging_file_handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+        self.logger.addHandler(self.logging_file_handler)
 
-        # Class Initialization
+        # Config
         self.data_manager = DataIO(self.data_path)
-        self.command_container: CommandContainer = CommandContainer(self.command_path)
+        self.config: Config = Config(self.config_path)
+        self.token = self.config["token"]
+        self.bank: CurrencyManager = CurrencyManager(self, self.config["currency"])
+        self.log_channel: TextChannel = None
+        self.command_container: CommandContainer = CommandContainer(self.config['commands'], self.command_path, self)
 
         self.watching_voice_channels = False
         self.process_pool = ThreadPoolExecutor(5)
@@ -48,62 +52,23 @@ class LithilClient(discord.Client):
         except NotImplementedError:
             pass
 
-        # Config
-        self.config: Config = Config(self.config_path)
-        self.token = self.config["token"]
-        self.bank: CurrencyManager = CurrencyManager(self, self.config["currency"])
-        self.command_header: str = self.config["command_header"]
-        self.log_channel: TextChannel = None
-
-        # Event lists adding
-        self.on_message_events.append(self.process_message)
-        self.on_close_events.append(self.bank.store_standings)
-
     async def on_ready(self):
         self.logger.info("Logged on as {0}".format(self.user))
         self.log_channel = self.get_channel(self.config["log_channel"])
         self.logger.info("Log channel is {0} with ID {1}".format(self.log_channel.name, self.log_channel.id))
+        async for message in self.log_channel.history(limit=200):
+            message: 'Message'
+            if message.author is self.user:
+                await message.delete()
         await self.log_channel.send("Lithil On")
-        # watchers
-        self.loop.run_in_executor(self.process_pool, self.voice_channel_watcher)
+        for watcher in self.watchers:
+            watcher.start_watching()
 
     async def on_message(self, message: Message):
         if not message.author.bot:
             self.logger.info('Message from {0.author}: {0.content}'.format(message))
             for on_message_event in self.on_message_events:
                 await on_message_event(message)
-
-    async def on_disconnect(self):
-        self.bank.store_standings()
-
-    def should_process(self, message: Message) -> bool:
-        return message.content.startswith(self.command_header)
-
-    async def process_message(self, message: Message) -> None:
-        if self.should_process(message):
-            call = Call(message)
-            if call.command in self.command_container.caller_dictionary.keys():
-                await self.command_container.call_command(call, self)
-
-    def voice_channel_watcher(self):
-        self.watching_voice_channels = True
-        self.logger.info("Voice Channel Watcher Started")
-        while self.watching_voice_channels:
-            start_time = time.time()
-            for server in self.guilds:
-                server: Guild
-                for voice_channel in server.voice_channels:
-                    voice_channel: VoiceChannel
-                    if len(voice_channel.members) > 1:
-                        for member in voice_channel.members:
-                            self.bank.add_currency(member, self.bank.money_per_minute_on_voice)
-            end_time = time.time()
-            time.sleep((end_time - start_time))
-            i = 60
-            while self.watching_voice_channels and i != 0:
-                time.sleep(1)
-                i -= 1
-        self.logger.info("Voice Channel Watcher Stopped")
 
     def run_bot(self):
         async def runner():

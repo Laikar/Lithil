@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Dict, Any, AnyStr
 import logging
 
+
 class DataIO:
     def __init__(self, data_path: Path):
         if not data_path.exists():
@@ -31,5 +32,3 @@ class DataIO:
         except FileNotFoundError:
             logging.getLogger('discord').info("Tried to read from file {} but it does not exist".format(file))
             return out
-
-

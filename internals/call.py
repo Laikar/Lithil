@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 from typing import List, Dict, AnyStr, TYPE_CHECKING
-
-
 from discord import Message, Guild, Member, TextChannel
 
 

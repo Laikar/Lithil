@@ -1,6 +1,6 @@
 token:
 
-command_header: _
+
 log_channel: 635598741042102273
 
 currency:
@@ -8,3 +8,8 @@ currency:
   name_plural: Papayas
   money_per_message: 2
   money_per_minute_on_voice: 5
+commands:
+  command_headers:
+    - _
+  restricted_channels:
+    - 203646766552186880

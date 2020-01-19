@@ -1,6 +1,3 @@
-import discord
-from discord import Client
-
 from internals import Call, LithilClient, Command
 
 
@@ -17,7 +14,8 @@ class Currency(Command):
 
             return out
         if call.args[0] == "me":
-            return "{} Tienes {} {}".format(call.author.mention, client.bank.get_currency(call.author), client.bank.currency_name)
+            return "{} Tienes {} {}".format(call.author.mention, client.bank.get_currency(call.author),
+                                            client.bank.currency_name_plural)
         if call.args[0] == "store":
             client.bank.store_standings()
             return "storing..."
