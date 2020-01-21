@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="51f6fbf1-c723-4cf5-a3d6-72058b8f3953" name="Lithil@laikar.moe" url="http://laikar.moe">
+        <fileTransfer host="laikar.moe" port="22" rootFolder="/opt/lithil" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

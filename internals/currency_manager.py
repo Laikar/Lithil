@@ -38,10 +38,6 @@ class CurrencyManager:
         self.client.on_message_events.append(self.on_message)
         self.client.on_close_events.append(self.on_close)
 
-
-
-
-
     def get_currency(self, user: User) -> int:
         try:
             return self._currency_dict[user.id]

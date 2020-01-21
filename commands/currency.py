@@ -5,7 +5,7 @@ from internals import Call, LithilClient, Command
 
 class Currency(Command):
     @classmethod
-    async def action(cls, call: Call, client: LithilClient):
+    async def action(cls, call: Call, client: LithilClient) -> str:
         if call.args[0] == "list":
             currency_dict = client.bank.get_currency_as_dict()
             out = "Current standings:\n"
