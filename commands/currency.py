@@ -1,3 +1,5 @@
+from discord import TextChannel
+
 from internals import Call, LithilClient, Command
 
 
@@ -20,6 +22,14 @@ class Currency(Command):
             client.bank.store_standings()
             return "storing..."
         elif call.args[0] == "ranking":
-            return client.bank.get_ranking_message()
+
+            if len(client.bank.ranking_channels) != 0:
+                out = "Puedes consultar el ranking en los siguientes canales"
+                for channel in client.bank.ranking_channels:
+                    channel: TextChannel
+                    out += "{}, ".format(channel.mention)
+            else:
+                out = client.bank.get_ranking_message()
+            return out
 
     callers = ["currency"]

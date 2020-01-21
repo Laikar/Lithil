@@ -10,6 +10,7 @@
           <excludedPaths>
             <excludedPath path="/venv" />
             <excludedPath local="true" path="$PROJECT_DIR$/venv" />
+            <excludedPath local="true" path="$PROJECT_DIR$/data" />
           </excludedPaths>
         </serverdata>
       </paths>

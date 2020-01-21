@@ -57,15 +57,15 @@ class LithilClient(discord.Client):
         self.logger.info("Logged on as {0}".format(self.user))
         self.log_channel = self.get_channel(self.config["log_channel"])
         self.logger.info("Log channel is {0} with ID {1}".format(self.log_channel.name, self.log_channel.id))
+        self.logger.info("starting on_ready events")
         for event in self.on_ready_events:
             await event()
-        async for message in self.log_channel.history(limit=200):
-            message: 'Message'
-            if message.author is self.user:
-                await message.delete()
-        await self.log_channel.send("Lithil On")
+        self.logger.info("on_ready events done, starting watchers")
         for watcher in self.watchers:
             watcher.start_watching()
+        self.logger.info("Lithil On")
+        await self.log_channel.send("Lithil On")
+
 
     async def on_message(self, message: Message):
         if not message.author.bot:
