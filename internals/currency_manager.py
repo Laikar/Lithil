@@ -55,10 +55,10 @@ class CurrencyManager:
             self.store_standings()
         self.ranking_update_pending = True
 
-    def add_currency(self, user: User, value: int, store: bool = False):
+    def add_currency(self, user: User, value: int, store: bool = True):
         self.set_currency(user, self.get_currency(user) + value, store, )
 
-    def remove_currency(self, user: User, value: int, store: bool = False):
+    def remove_currency(self, user: User, value: int, store: bool = True):
         if self.get_currency(user) < value:
             raise NotEnoughCurrencyException
         else:
