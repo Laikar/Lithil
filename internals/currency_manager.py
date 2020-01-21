@@ -49,7 +49,7 @@ class CurrencyManager:
             self._currency_dict[user.id] = 0
             return 0
 
-    def set_currency(self, user: User, value: int, store: bool = False):
+    def set_currency(self, user: User, value: int, store: bool = True):
         self._currency_dict[user.id] = value
         if store:
             self.store_standings()

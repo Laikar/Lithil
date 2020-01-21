@@ -22,7 +22,7 @@ def voice_channel_watcher(client: 'LithilClient') -> AnyStr:
     return output
 
 
-@watcher(tick_rate=10, log=True)
+@watcher(tick_rate=10)
 async def ranking_updater(client: 'LithilClient') -> AnyStr:
     if client.bank.ranking_update_pending:
         await client.bank.update_rankings()
