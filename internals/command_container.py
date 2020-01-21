@@ -39,13 +39,13 @@ class CommandContainer:
                 break
 
     def load_commands(self, command_path: Path):
-        dirlist = [command_path]
+        command_directories = [command_path]
         for x in command_path.iterdir():
             if x.is_dir() and not x.name.startswith("__"):
-                dirlist.append(x)
-        for folder in dirlist:
-            filelist = list(folder.glob("*.py"))
-            for file in filelist:
+                command_directories.append(x)
+        for folder in command_directories:
+            command_files: List[Path] = list(folder.glob("*.py"))
+            for file in command_files:
                 if not file.name.startswith("__"):
                     module_name = ".%s" % file.name.replace(".py", "")
                     if folder is command_path:
@@ -57,8 +57,7 @@ class CommandContainer:
                     commands_in_module = [m[1] for m in inspect.getmembers(command_module, inspect.isclass)
                                           if m[1].__module__ == command_module.__name__ and issubclass(m[1], Command)]
                     for command in commands_in_module:
-                        command_name = command.__name__
-                        command.name = command_name
-                        self.command_dictionary[command_name] = command
+                        command.name = command.__name__
+                        self.command_dictionary[command.name] = command
                         for caller in command.callers:
                             self.caller_dictionary[caller] = command

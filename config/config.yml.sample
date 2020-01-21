@@ -4,10 +4,23 @@ token:
 log_channel: 635598741042102273
 
 currency:
+  #El nombre de la moneda
   name: Papaya
+  #Nombre en plural
   name_plural: Papayas
+  #Dinero por mensaje
   money_per_message: 2
+  #Dinero por minuto en voz
   money_per_minute_on_voice: 5
+  #Lista de canales dedicados al ranking.
+  #Al iniciarse, el bot purgara todos los mensajes de estos canales y eliminara todos los permisos de escritura que pueda.
+  ranking_channels:
+    - 667803891114442809
+  #Lista de mensajes dedicados al ranking.
+  #El bot editara estos mensaes para que reflejen el ranking actual.
+
+  ranking_messages: 
+  #  - 668625804338397216
 commands:
   command_headers:
     - _

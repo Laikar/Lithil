@@ -25,15 +25,16 @@ class LithilClient(discord.Client):
 
         # EventLists
         self.on_message_events: List[Callable[[Message], Coroutine[Any, Any, None]]] = []
-        self.on_ready_events: List[Callable[[], None]] = []
-        self.on_close_events: List[Callable[[], None]] = []
+        self.on_ready_events: List[Callable[[], Coroutine[Any, Any, None]]] = []
+        self.on_close_events: List[Callable[[], Coroutine[Any, Any, None]]] = []
         self.watchers: List[Watcher] = []
 
         # Logging
 
         self.logger = logging.getLogger('discord')
         self.logger.setLevel(logging.INFO)
-        self.logging_file_handler = logging.FileHandler(filename=str(self.log_file.absolute()), encoding='utf-8', mode='w')
+        self.logging_file_handler = logging.FileHandler(filename=str(self.log_file.absolute()), encoding='utf-8',
+                                                        mode='w')
         self.logging_file_handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
         self.logger.addHandler(self.logging_file_handler)
 
@@ -56,6 +57,8 @@ class LithilClient(discord.Client):
         self.logger.info("Logged on as {0}".format(self.user))
         self.log_channel = self.get_channel(self.config["log_channel"])
         self.logger.info("Log channel is {0} with ID {1}".format(self.log_channel.name, self.log_channel.id))
+        for event in self.on_ready_events:
+            await event()
         async for message in self.log_channel.history(limit=200):
             message: 'Message'
             if message.author is self.user:
@@ -94,3 +97,5 @@ class LithilClient(discord.Client):
         self.watching_voice_channels = False
         await self.logout()
         self.loop.stop()
+
+    # TODO Añadir decorators para convertir las funciones en eventos automáticamente

@@ -13,11 +13,13 @@ class Currency(Command):
                     value)
 
             return out
-        if call.args[0] == "me":
+        elif call.args[0] == "me":
             return "{} Tienes {} {}".format(call.author.mention, client.bank.get_currency(call.author),
                                             client.bank.currency_name_plural)
-        if call.args[0] == "store":
+        elif call.args[0] == "store":
             client.bank.store_standings()
             return "storing..."
+        elif call.args[0] == "ranking":
+            return client.bank.get_ranking_message()
 
     callers = ["currency"]
